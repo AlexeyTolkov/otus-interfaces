@@ -11,18 +11,35 @@ namespace otus_interfaces
         private readonly ICurrencyConverter _currencyConverter;
         private readonly ITransactionRepository _transactionRepository;
         private readonly ITransactionParser _transactionParser;
+        private readonly ICommissionCalculator _commissionCalculator;
 
-        public BudgetApplication(ITransactionRepository transactionRepository, ITransactionParser transactionParser, ICurrencyConverter currencyConverter)
+        public BudgetApplication(ITransactionRepository transactionRepository,
+                                 ITransactionParser transactionParser,
+                                 ICurrencyConverter currencyConverter,
+                                 ICommissionCalculator commissionCalculator)
         {
             _currencyConverter = currencyConverter;
             _transactionRepository = transactionRepository;
             _transactionParser = transactionParser;
+            _commissionCalculator = commissionCalculator;
         }
 
         public void AddTransaction(string input)
         {
             var transaction = _transactionParser.Parse(input);
             _transactionRepository.AddTransaction(transaction);
+
+            var commission = _commissionCalculator.Calc(transaction);
+            if (commission != null)
+            {
+                _transactionRepository.AddTransaction(commission);
+            }
+
+            //if (transaction is Transfer)
+            //{
+            //    var commission = new Commission(transaction);
+            //    _transactionRepository.AddTransaction(commission);
+            //}
         }
 
         public void OutputTransactions()

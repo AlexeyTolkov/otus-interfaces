@@ -13,15 +13,25 @@ namespace otus_interfaces
         {
             Trace.Listeners.Add(new ConsoleTraceListener());
 
-            //var currencyConverter = new CurrencyConverter();
+            //var currencyConverter = new LazyCurrencyConverter();
             var currencyConverter = new ExchangeRatesApiConverter(new HttpClient(), new MemoryCache(new MemoryCacheOptions()), "950ad6c9199ec17f1dab4f8a93c1739b");
             var transactionRepository = new InMemoryTransactionRepository();
             var transactionParser = new TransactionParser();
+            var comissionCalculator = new ComissionCalculator();
 
-            var budgetApp = new BudgetApplication(transactionRepository, transactionParser, currencyConverter);
+            var budgetApp = new BudgetApplication(transactionRepository, transactionParser, currencyConverter, comissionCalculator);
 
-            var predefinedTransactionsInput = new PredefinedTransactionsInput(budgetApp);
-            predefinedTransactionsInput.ReadTransactions();
+            // 1. Predefined constant transactions input
+            var transactionsInputPredefined = new TransactionsInputPredefined(budgetApp);
+            transactionsInputPredefined.ReadTransactions();
+             
+            // 2. Loading from file 
+            //var transactionsInputLoadingFromFile = new TransactionsInputLoadingFromFile(budgetApp);
+            //transactionsInputLoadingFromFile.ReadTransactions("file.txt");
+
+            // 3. Console user input 
+            //var transactionsInputFromUserConsole = new TransactionsInputFromUserConsole(budgetApp);
+            //transactionsInputFromUserConsole.ReadTransactions();
 
             budgetApp.OutputTransactions();
             budgetApp.OutputBalanceInCurrency("USD");

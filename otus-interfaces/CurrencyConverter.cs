@@ -1,6 +1,6 @@
 ﻿namespace otus_interfaces
 {
-    internal class CurrencyConverter : ICurrencyConverter
+    internal class LazyCurrencyConverter : ICurrencyConverter
     {
         public ICurrencyAmount ConvertCurrency(ICurrencyAmount amount, string currencyCode)
         {
