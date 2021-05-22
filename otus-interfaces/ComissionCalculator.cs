@@ -7,6 +7,7 @@
             if (!(transaction is Transfer))
                 return null;
 
+            // Фиксированно 2%
             return new Commission(transaction, 2);
         }
     }
